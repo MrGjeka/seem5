@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SeamlessFocus</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        width: 300px;
+        font-family: "Roboto", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background: linear-gradient(135deg, #121212, #1db954);
+        color: #ffffff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+      }
+
+      h1,
+      h2 {
+        color: #ffffff;
+        text-align: center;
+        margin-bottom: 20px;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        font-family: "Fredoka One", cursive;
+      }
+
+      button {
+        display: block;
+        width: 100%;
+        padding: 12px;
+        margin-top: 10px;
+        border: none;
+        border-radius: 25px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.1s, box-shadow 0.3s;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      #login-button,
+      #shuffle-liked-songs {
+        background-color: #1db954;
+        color: white;
+      }
+
+      #login-button:hover,
+      #shuffle-liked-songs:hover {
+        background-color: #1ed760;
+      }
+
+      #logout-button {
+        background-color: #b3b3b3;
+        color: #121212;
+      }
+
+      #logout-button:hover {
+        background-color: #ffffff;
+      }
+
+      button:active {
+        transform: scale(0.98);
+      }
+
+      #status,
+      #now-playing {
+        margin-top: 20px;
+        text-align: center;
+        font-size: 14px;
+        color: #b3b3b3;
+      }
+
+      #playlists {
+        margin-top: 20px;
+        max-height: 200px;
+        overflow-y: auto;
+      }
+
+      #playlists button {
+        background-color: #333;
+        color: white;
+        margin-top: 5px;
+      }
+
+      #playlists button:hover {
+        background-color: #444;
+      }
+
+      .spotify-logo {
+        width: 50px;
+        height: 50px;
+        margin: 0 auto 20px;
+        display: block;
+      }
+
+      #content {
+        display: none;
+      }
+
+      #playlist-selector {
+        width: 100%;
+        margin-top: 10px;
+        padding: 10px;
+        background-color: #333;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      #play-button {
+        margin-top: 10px;
+        background-color: #1db954;
+        color: white;
+      }
+
+      #play-button:disabled {
+        background-color: #333;
+        cursor: not-allowed;
+      }
+
+      #play-pause-button {
+        margin-top: 10px;
+        background-color: #1db954;
+        color: white;
+      }
+
+      .control-buttons {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+      }
+      .control-buttons button {
+        flex: 1;
+        margin: 0 5px;
+      }
+      #previous-button,
+      #next-button {
+        background-color: #535353;
+        color: white;
+      }
+
+      /* Enhanced Toggle Switch Styles */
+      #toggles {
+        display: flex;
+        flex-direction: column;
+        margin-top: 20px;
+      }
+
+      .toggle-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 15px;
+        font-size: 14px;
+      }
+
+      .toggle-container label {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+      }
+
+      .toggle-container label .label-text {
+        margin-right: 10px;
+      }
+
+      .toggle-container input[type="checkbox"] {
+        display: none;
+      }
+
+      .toggle-container .toggle-switch {
+        position: relative;
+        width: 50px;
+        height: 24px;
+        background-color: #ccc;
+        border-radius: 34px;
+        transition: background-color 0.3s;
+      }
+
+      .toggle-container .toggle-switch::after {
+        content: "";
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 20px;
+        height: 20px;
+        background-color: white;
+        border-radius: 50%;
+        transition: transform 0.3s;
+      }
+
+      .toggle-container input[type="checkbox"]:checked + .toggle-switch {
+        background-color: #1db954;
+      }
+
+      .toggle-container input[type="checkbox"]:checked + .toggle-switch::after {
+        transform: translateX(26px);
+      }
+
+      /* Optional: Hover Effects */
+      .toggle-container .toggle-switch:hover {
+        box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.2);
+      }
+    </style>
+  </head>
+  <body>
+    <img
+      src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Spotify_logo_without_text.svg/2048px-Spotify_logo_without_text.svg.png"
+      alt="Spotify Logo"
+      class="spotify-logo"
+    />
+    <h1>SeamlessFocus</h1>
+    <div id="login-section">
+      <button id="login-button">Log in to Spotify</button>
+    </div>
+    <div id="content">
+      <button id="logout-button">Log out</button>
+      <div id="status"></div>
+      <select id="playlist-selector">
+        <option>Loading playlists...</option>
+      </select>
+      <button id="play-button">Play Selected</button>
+      <div class="control-buttons">
+        <button id="previous-button">Previous</button>
+        <button id="next-button">Next</button>
+      </div>
+      <div id="now-playing"></div>
+      <div id="toggles">
+        <div class="toggle-container">
+          <label for="auto-replay-toggle">
+            <span class="label-text">Auto Replay Music</span>
+            <input type="checkbox" id="auto-replay-toggle" checked />
+            <span class="toggle-switch"></span>
+          </label>
+        </div>
+        <div class="toggle-container">
+          <label for="auto-pause-toggle">
+            <span class="label-text">Auto Pause Music</span>
+            <input type="checkbox" id="auto-pause-toggle" checked />
+            <span class="toggle-switch"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+    <script src="popup.js"></script>
+  </body>
+</html>
